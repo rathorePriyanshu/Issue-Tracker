@@ -1,5 +1,14 @@
+/*
+  Warnings:
+
+  - You are about to drop the `issues` table. If the table is not empty, all the data it contains will be lost.
+
+*/
+-- DropTable
+DROP TABLE `issues`;
+
 -- CreateTable
-CREATE TABLE `Issues` (
+CREATE TABLE `Issue` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT NOT NULL,
