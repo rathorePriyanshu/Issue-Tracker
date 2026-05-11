@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const body = await request.json();
   const validation = validateIssueSchema.safeParse(body);
@@ -12,9 +12,8 @@ export async function PATCH(
     return NextResponse.json(validation.error.errors, { status: 400 });
   }
 
-  const { id } = await params;
   const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(params.id) },
   });
 
   if (!issue) {
@@ -34,11 +33,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
-  const { id } = await params;
   const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(params.id) },
   });
 
   if (!issue) {
@@ -46,7 +44,7 @@ export async function DELETE(
   }
 
   await prisma.issue.delete({
-    where: { id: parseInt(id) },
+    where: { id: parseInt(params.id) },
   });
 
   return NextResponse.json({});
