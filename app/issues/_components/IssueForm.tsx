@@ -6,20 +6,20 @@ import { Issue } from "@prisma/client";
 import { Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { RiInformation2Line } from "react-icons/ri";
 import { z } from "zod";
-
-type IssueFormData = z.infer<typeof validateIssueSchema>;
+import dynamic from "next/dynamic";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
-const IssueFormData = ({ issue }: { issue?: Issue }) => {
+type IssueFormData = z.infer<typeof validateIssueSchema>;
+
+const IssueForm = ({ issue }: { issue?: Issue }) => {
   const {
     register,
     control,
@@ -86,4 +86,4 @@ const IssueFormData = ({ issue }: { issue?: Issue }) => {
   );
 };
 
-export default IssueFormData;
+export default IssueForm;
