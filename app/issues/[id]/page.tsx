@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import DeleteIssueButton from "./DeleteIssueButton";
 import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
+import AssigneeIssueButton from "./AssigneeIssueButton";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -29,6 +30,7 @@ const IssueDetailPage = async ({ params }: Props) => {
       {session && (
         <Box my="2">
           <Flex gap="3" direction="column">
+            <AssigneeIssueButton />
             <EditIssueButton IssueId={issue.id} />
             <DeleteIssueButton IssueId={issue.id} />
           </Flex>
