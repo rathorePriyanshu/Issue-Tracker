@@ -1,15 +1,30 @@
 import { IssueStatusBadge, Link } from "@/app/components";
 import { prisma } from "@/prisma/client";
-import { Status } from "@prisma/client";
+import { Issue, Status } from "@prisma/client";
 import { Table, Text } from "@radix-ui/themes";
+import NextLink from "next/link";
 import IssueActions from "./IssueActions";
+import { FaArrowUp } from "react-icons/fa6";
 
 interface Props {
-  searchParams: Promise<{ status: Status }>;
+  searchParams: Promise<{ status: Status; orderBy: keyof Issue }>;
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
-  const { status } = await searchParams;
+  const params = await searchParams;
+  const status = params.status;
+  const orderBy = params.orderBy;
+
+  const columns: { label: string; value: keyof Issue; classname?: string }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", classname: "hidden md:table-cell" },
+    {
+      label: "CreatedAt",
+      value: "createdAt",
+      classname: "hidden md:table-cell",
+    },
+  ];
+
   const statuses = Object.values(Status);
   const filterStatus = statuses.includes(status) ? status : undefined;
 
@@ -26,13 +41,21 @@ const IssuesPage = async ({ searchParams }: Props) => {
         <Table.Root variant="surface">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="hidden md:table-cell">
-                Status
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="hidden md:table-cell">
-                Created At
-              </Table.ColumnHeaderCell>
+              {columns.map((column) => (
+                <Table.ColumnHeaderCell
+                  key={column.value}
+                  className={column.classname}
+                >
+                  <NextLink
+                    href={{
+                      query: { ...params, orderBy: column.value },
+                    }}
+                  >
+                    {column.label}
+                  </NextLink>
+                  {column.value === orderBy && <FaArrowUp className="inline" />}
+                </Table.ColumnHeaderCell>
+              ))}
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -44,7 +67,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
                     <IssueStatusBadge status={issue.status} />
                   </div>
                 </Table.Cell>
-                <Table.Cell className="hidden md:table-cell">
+                <Table.Cell className="">
                   <IssueStatusBadge status={issue.status} />
                 </Table.Cell>
                 <Table.Cell className="hidden md:table-cell">
