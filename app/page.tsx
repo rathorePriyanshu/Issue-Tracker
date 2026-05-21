@@ -1,3 +1,5 @@
+import Pagination from "./components/Pagination";
+
 export default function Home() {
-  return <div className="bg-blue-600">Hello</div>;
+  return <Pagination itemCount={100} currentPage={1} pageSize={10} />;
 }
