@@ -2,8 +2,8 @@
 import { ErrorMessage, Spinner } from "@/app/components";
 import { validateIssueSchema } from "@/app/validSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Issue } from "@prisma/client";
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { Issue, Status } from "@prisma/client";
+import { Button, Callout, Flex, Select, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,12 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   } = useForm<IssueFormData>({
     resolver: zodResolver(validateIssueSchema),
   });
+
+  const statuses: { label: string; value: Status }[] = [
+    { label: "Open", value: "OPEN" },
+    { label: "In Progress", value: "IN_PROGRESS" },
+    { label: "Close", value: "CLOSE" },
+  ];
 
   const [error, setError] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
@@ -60,12 +66,40 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         </Callout.Root>
       )}
       <form onSubmit={onSubmit} className=" space-y-3">
-        <TextField.Root
-          defaultValue={issue?.title}
-          placeholder="Title..."
-          {...register("title")}
-        />
-        <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        <Flex justify="between">
+          <Flex
+            direction="column"
+            gap="1"
+            className={`${issue ? "w-2/3" : "w-full"}`}
+          >
+            <TextField.Root
+              defaultValue={issue?.title}
+              placeholder="Title..."
+              {...register("title")}
+            />
+            <ErrorMessage>{errors.title?.message}</ErrorMessage>
+          </Flex>
+          {issue && (
+            <Controller
+              name="status"
+              control={control}
+              defaultValue={issue?.status}
+              render={({ field }) => (
+                <Select.Root value={field.value} onValueChange={field.onChange}>
+                  <Select.Trigger placeholder="Change Status..." />
+
+                  <Select.Content>
+                    {statuses.map((status) => (
+                      <Select.Item key={status.value} value={status.value}>
+                        {status.label}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Root>
+              )}
+            />
+          )}
+        </Flex>
 
         <Controller
           name="description"

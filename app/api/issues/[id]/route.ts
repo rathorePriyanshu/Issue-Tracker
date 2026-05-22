@@ -4,14 +4,17 @@ import { prisma } from "@/prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export async function PATCH(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({}, { status: 401 });
   }
+
+  const { id } = await params;
 
   const body = await request.json();
   const validation = patchIssueSchema.safeParse(body);
@@ -19,7 +22,7 @@ export async function PATCH(
     return NextResponse.json(validation.error.errors, { status: 400 });
   }
 
-  const { assignedUserId, title, description } = body;
+  const { assignedUserId, title, description, status } = body;
 
   if (assignedUserId) {
     const user = await prisma.user.findUnique({
@@ -31,7 +34,7 @@ export async function PATCH(
   }
 
   const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(params.id) },
+    where: { id: parseInt(id) },
   });
 
   if (!issue) {
@@ -44,23 +47,23 @@ export async function PATCH(
       title,
       description,
       assignedUserId,
+      status,
     },
   });
 
   return NextResponse.json(updatedIssue);
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({}, { status: 401 });
   }
 
+  const { id } = await params;
+
   const issue = await prisma.issue.findUnique({
-    where: { id: parseInt(params.id) },
+    where: { id: parseInt(id) },
   });
 
   if (!issue) {
@@ -68,7 +71,7 @@ export async function DELETE(
   }
 
   await prisma.issue.delete({
-    where: { id: parseInt(params.id) },
+    where: { id: parseInt(id) },
   });
 
   return NextResponse.json({});

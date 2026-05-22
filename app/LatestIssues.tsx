@@ -7,7 +7,7 @@ import { IssueStatusBadge } from "./components";
 const LatestIssues = async () => {
   const issues = await prisma.issue.findMany({
     orderBy: { createdAt: "desc" },
-    take: 5,
+    take: 7,
     include: {
       assignedUser: true,
     },
@@ -23,7 +23,7 @@ const LatestIssues = async () => {
           {issues.map((issue) => (
             <Table.Row key={issue.id}>
               <Table.Cell>
-                <Flex justify="between">
+                <Flex justify="between" align="center">
                   <Flex direction="column" align="start" gap="2">
                     <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                     <IssueStatusBadge status={issue.status} />

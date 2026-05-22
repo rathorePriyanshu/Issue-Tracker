@@ -7,15 +7,17 @@ interface Props {
   open: number;
   inProgress: number;
   close: number;
+  total?: number;
 }
 
-const IssueSummary = ({ open, inProgress, close }: Props) => {
+const IssueSummary = ({ open, inProgress, close, total }: Props) => {
   const containers: {
     label: string;
-    value: number;
-    status: Status;
+    value: number | undefined;
+    status: Status | "";
     color: string;
   }[] = [
+    { label: "Total", value: total, status: "", color: "bg-blue-500" },
     { label: "Open", value: open, status: "OPEN", color: "bg-red-500" },
     {
       label: "In Progress",
@@ -29,7 +31,7 @@ const IssueSummary = ({ open, inProgress, close }: Props) => {
   return (
     <Flex gap="4">
       {containers.map((container) => (
-        <Card key={container.label} className={`${container.color}`}>
+        <Card key={container.label} className={`h-20 w-40  ${container.color}`}>
           <Flex direction="column" gap="1">
             <Link
               className="text-sm font-medium"

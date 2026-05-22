@@ -20,8 +20,8 @@ const IssuesChart = ({ open, inProgress, close }: Props) => {
   ];
 
   return (
-    <Card>
-      <ResponsiveContainer width="100%" height={300}>
+    <Card className="flex-1 py-5">
+      <ResponsiveContainer width="100%" height={450}>
         <BarChart data={data}>
           <XAxis dataKey="label" />
           <YAxis />

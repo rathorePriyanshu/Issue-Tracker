@@ -40,9 +40,11 @@ export default function RootLayout({
       >
         <QueryClientProvider>
           <AuthProvider>
-            <Theme accentColor="violet">
-              <NavBar />
-              <main className="p-5">{children}</main>
+            <Theme accentColor="violet" appearance="light">
+              <div className="bg-[#f8f5f0] min-h-screen">
+                <NavBar />
+                <main className="p-5">{children}</main>
+              </div>
             </Theme>
           </AuthProvider>
         </QueryClientProvider>
