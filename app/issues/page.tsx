@@ -23,8 +23,8 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const filterStatus = statuses.includes(status) ? status : undefined;
 
   const filteredOrderBy = columnNames.includes(orderBy)
-    ? { [orderBy]: "asc" }
-    : undefined;
+    ? { [orderBy]: "asc" as const }
+    : { createdAt: "desc" as const };
 
   const issues = await prisma.issue.findMany({
     where: { status: filterStatus },
