@@ -3,7 +3,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AiFillBug } from "react-icons/ai";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Avatar, Box, DropdownMenu, Flex, Text } from "@radix-ui/themes";
 import { Skeleton } from "@/app/components";
 
@@ -50,15 +50,19 @@ export const NextLinks = () => {
 };
 
 export const AuthStatus = () => {
+  const pathname = usePathname();
   const { status, data: session } = useSession();
 
   if (status === "loading") return <Skeleton width="3rem" />;
 
   if (status === "unauthenticated")
     return (
-      <Link className="nav-link" href="/api/auth/signin">
+      <button
+        onClick={() => signIn("google", { callbackUrl: pathname })}
+        className="nav-link"
+      >
         Login
-      </Link>
+      </button>
     );
 
   return (
@@ -79,7 +83,12 @@ export const AuthStatus = () => {
             <Text size="2">{session!.user?.email}</Text>
           </DropdownMenu.Label>
           <DropdownMenu.Item className="cursor-pointer">
-            <Link href="/api/auth/signout">Logout</Link>
+            <button
+              onClick={() => signOut({ callbackUrl: pathname })}
+              className="cursor-pointer"
+            >
+              Logout
+            </button>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
